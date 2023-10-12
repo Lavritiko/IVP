@@ -52,6 +52,14 @@ class Menu_win:
         print('Frames per second : ', fps,'FPS')
         frame_count = vid_capture.get(cv2.CAP_PROP_FRAME_COUNT)
         print('Frame count : ', frame_count)
+        
+        _, image = vid_capture.read()
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image2 = Image.fromarray(image)
+        image2 = ImageTk.PhotoImage(image2)
+        PicWindow(self.root, 1024, 768, image2, image_cv=image)
+        
+        
         while(vid_capture.isOpened()):
             ret, frame = vid_capture.read()
             if ret == True: 
