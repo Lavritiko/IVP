@@ -2,8 +2,6 @@ from  customtkinter import *
 from interface.widgets.message_box import MessageBox
 from interface.cap_pic import PicWindow
 from interface.capture_p import CapturePic
-from PIL import Image
-from PIL import ImageTk
 from tkinter import filedialog
 import cv2
 
@@ -31,10 +29,7 @@ class Menu_win:
         path = filedialog.askopenfilename()
         if len(path) > 0:
             image = cv2.imread(path)
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image2 = Image.fromarray(image)
-            image2 = ImageTk.PhotoImage(image2)
-            PicWindow(self.root, 1024, 768, image2, image_cv=image)
+            PicWindow(self.root, 1024, 768, image_cv=image)
         
     def capturePicture(self):
         CapturePic(self.root).create_screen_canvas()
@@ -54,10 +49,7 @@ class Menu_win:
         print('Frame count : ', frame_count)
         
         _, image = vid_capture.read()
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image2 = Image.fromarray(image)
-        image2 = ImageTk.PhotoImage(image2)
-        PicWindow(self.root, 1024, 768, image2, image_cv=image)
+        PicWindow(self.root, 1024, 768, image_cv=image)
         
         
         while(vid_capture.isOpened()):
@@ -96,5 +88,5 @@ class Menu_win:
         self.possible_functionality[choice]()
     
     def about(self):
-        info = "Created by: \n me XD \n  2023"
+        info = "Created by: \n Lavrentsova Anna, Feklin Nikita XD \n  2023"
         MessageBox(self.root, title="About", message=info, high=200, width=270)

@@ -109,9 +109,8 @@ class CapturePic:
     def take_bounded_screenshot(self, x1, y1, x2, y2):
         image = pyautogui.screenshot(region=(x1, y1, x2, y2))
         title_name = f"Экран ({self.start_x}, {self.start_y}) - ({self.current_x}, {self.current_y})"
-        image_cv = np.array(image)
-        image2 = ImageTk.PhotoImage(image)
-        PicWindow(self.root, 1024, 768, image2, image_cv=image_cv, title=title_name)
+        image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        PicWindow(self.root, 1024, 768, image_cv, title=title_name)
 
     def hide_cord(self, event):
         self.cord.place_forget()
