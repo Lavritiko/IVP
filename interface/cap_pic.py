@@ -29,6 +29,7 @@ class PicWindow:
     
     
     def draw_widgets(self):
+        print('hui')
         self.tab_view.pack()
         self.switch_var = StringVar(value='off')
         sw = CTkSwitch(self.tab_view.tab("Изображение"), text='Switch', command=self.switch_callback, variable=self.switch_var, width=150, height=30, onvalue='on', offvalue='off')
