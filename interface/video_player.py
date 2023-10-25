@@ -54,8 +54,8 @@ class VideoPlayer():
         Settings_block(tab_settings, 'Интенсивность').draw_slider(-127, 127, command=self.hmm.contrast)
         Settings_block(tab_settings, 'Яркость').draw_slider(-127, 127, command=self.hmm.brightness)
         Settings_block(tab_settings, 'Красный').draw_slider(-127, 127, command=self.hmm.red)
-        Settings_block(tab_settings, 'Зеленый').draw_slider(0, 100)
-        Settings_block(tab_settings, 'Синий').draw_slider(0, 100)
+        Settings_block(tab_settings, 'Зеленый').draw_slider(-127, 127, command=self.hmm.green)
+        Settings_block(tab_settings, 'Синий').draw_slider(-127, 127, command=self.hmm.blue)
         
     def start(self):
         self.root.mainloop()

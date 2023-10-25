@@ -6,6 +6,8 @@ from interface.video_player import  VideoPlayer
 from tkinter import filedialog
 import cv2
 
+from interface.video_player import VideoPlayer
+
 class Menu_win:
     def __init__(self, resizable=(False, False)):
         set_appearance_mode("dark")
@@ -45,6 +47,10 @@ class Menu_win:
         # if (not vid_capture.isOpened()):
         #     raise Exception("Error opening the video file")
         
+        # vid_capture = cv2.VideoCapture(path)e
+        # if (not vid_capture.isOpened()):
+        #     raise Exception("Error opening the video file")
+        
         # fps = vid_capture.get(cv2.CAP_PROP_FPS)
 
         # print('Frames per second : ', fps,'FPS')
@@ -53,6 +59,10 @@ class Menu_win:
         
         # _, image = vid_capture.read()
         # PicWindow(self.root, 1024, 768, image_cv=image)
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # image2 = Image.fromarray(image)
+        # image2 = ImageTk.PhotoImage(image2)
+        # PicWindow(self.root, 1024, 768, image2, image_cv=image)
         
         
         # while(vid_capture.isOpened()):
