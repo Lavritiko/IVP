@@ -16,6 +16,7 @@ class Settings:
 
         return gray_img
     
+    
     def brightness(self, value):
 
         self.img = self.img2 * (self.beta_cnt / 127 + 1) - self.beta_cnt + value
@@ -36,6 +37,22 @@ class Settings:
         b, g, r = cv2.split(self.img2)
         r = r * value / 127 + value
         r = np.uint8(np.clip(r, 0, 255))
+        self.img = cv2.merge((b, g, r))
+        
+        return self.img
+    
+    def blue(self, value):
+        b, g, r = cv2.split(self.img2)
+        b = b * value / 127 + value
+        b = np.uint8(np.clip(b, 0, 255))
+        self.img = cv2.merge((b, g, r))
+        
+        return self.img
+    
+    def green(self, value):
+        b, g, r = cv2.split(self.img2)
+        g = g * value / 127 + value
+        g = np.uint8(np.clip(g, 0, 255))
         self.img = cv2.merge((b, g, r))
         
         return self.img

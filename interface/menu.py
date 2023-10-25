@@ -2,6 +2,7 @@ from  customtkinter import *
 from interface.widgets.message_box import MessageBox
 from interface.cap_pic import PicWindow
 from interface.capture_p import CapturePic
+from interface.video_player import  VideoPlayer
 from tkinter import filedialog
 import cv2
 
@@ -39,33 +40,35 @@ class Menu_win:
         path = filedialog.askopenfilename()
         
         vid_capture = cv2.VideoCapture(path)
-        if (not vid_capture.isOpened()):
-            raise Exception("Error opening the video file")
         
-        fps = vid_capture.get(cv2.CAP_PROP_FPS)
+        VideoPlayer(self.root, vid_capture)
+        # if (not vid_capture.isOpened()):
+        #     raise Exception("Error opening the video file")
+        
+        # fps = vid_capture.get(cv2.CAP_PROP_FPS)
 
-        print('Frames per second : ', fps,'FPS')
-        frame_count = vid_capture.get(cv2.CAP_PROP_FRAME_COUNT)
-        print('Frame count : ', frame_count)
+        # print('Frames per second : ', fps,'FPS')
+        # frame_count = vid_capture.get(cv2.CAP_PROP_FRAME_COUNT)
+        # print('Frame count : ', frame_count)
         
-        _, image = vid_capture.read()
-        PicWindow(self.root, 1024, 768, image_cv=image)
+        # _, image = vid_capture.read()
+        # PicWindow(self.root, 1024, 768, image_cv=image)
         
         
-        while(vid_capture.isOpened()):
-            ret, frame = vid_capture.read()
-            if ret == True: 
-                cv2.imshow('Frame',frame)
-                key = cv2.waitKey(20)
+        # while(vid_capture.isOpened()):
+        #     ret, frame = vid_capture.read()
+        #     if ret == True: 
+        #         cv2.imshow('Frame',frame)
+        #         key = cv2.waitKey(20)
                 
-                if key == ord('q'):
-                    break
-            else:
-                print('end')
-                break
+        #         if key == ord('q'):
+        #             break
+        #     else:
+        #         print('end')
+        #         break
         
-        vid_capture.release()
-        cv2.destroyAllWindows()
+        # vid_capture.release()
+        # cv2.destroyAllWindows()
         
     def captureVideo(self):
         print('captureVideo')

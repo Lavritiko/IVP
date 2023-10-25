@@ -7,5 +7,10 @@ class Switch:
     
     def draw_switch(self, var, command):
         
-        sw = CTkSwitch(self.place, text=self.text, command=command, variable=var, width=150, height=30, onvalue='on', offvalue='off')
+        sw = CTkSwitch(self.place, 
+                       text=self.text, 
+                       command=command, 
+                       variable=var, 
+                       width=150, height=30, 
+                       onvalue='on', offvalue='off')
         sw.pack()
