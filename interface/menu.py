@@ -2,11 +2,11 @@ from  customtkinter import *
 from interface.widgets.message_box import MessageBox
 from interface.cap_pic import PicWindow
 from interface.capture_p import CapturePic
-from interface.video_player import  VideoPlayer
+from interface.video_player import  VideoPlayerWindow
 from tkinter import filedialog
 import cv2
 
-from interface.video_player import VideoPlayer
+from interface.video_player import VideoPlayerWindow
 
 class Menu_win:
     def __init__(self, resizable=(False, False)):
@@ -27,6 +27,10 @@ class Menu_win:
             key: the text of the menu element and 
             value: the function to be called
         '''
+        
+        self.hmm = StringVar(value="Input")
+        self.btn1 = CTkOptionMenu(self.root, values=[*self.possible_functionality.keys()], variable=self.hmm, command=self.input_callback)
+        self.about = CTkButton(self.root, text="about", command=self.about)
     
     def selectPicture(self):
         path = filedialog.askopenfilename()
@@ -40,45 +44,9 @@ class Menu_win:
     def selectVideo(self):
         print('selectVideo')
         path = filedialog.askopenfilename()
-        
-        vid_capture = cv2.VideoCapture(path)
-        
-        VideoPlayer(self.root, vid_capture)
-        # if (not vid_capture.isOpened()):
-        #     raise Exception("Error opening the video file")
-        
-        # vid_capture = cv2.VideoCapture(path)e
-        # if (not vid_capture.isOpened()):
-        #     raise Exception("Error opening the video file")
-        
-        # fps = vid_capture.get(cv2.CAP_PROP_FPS)
-
-        # print('Frames per second : ', fps,'FPS')
-        # frame_count = vid_capture.get(cv2.CAP_PROP_FRAME_COUNT)
-        # print('Frame count : ', frame_count)
-        
-        # _, image = vid_capture.read()
-        # PicWindow(self.root, 1024, 768, image_cv=image)
-        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        # image2 = Image.fromarray(image)
-        # image2 = ImageTk.PhotoImage(image2)
-        # PicWindow(self.root, 1024, 768, image2, image_cv=image)
-        
-        
-        # while(vid_capture.isOpened()):
-        #     ret, frame = vid_capture.read()
-        #     if ret == True: 
-        #         cv2.imshow('Frame',frame)
-        #         key = cv2.waitKey(20)
-                
-        #         if key == ord('q'):
-        #             break
-        #     else:
-        #         print('end')
-        #         break
-        
-        # vid_capture.release()
-        # cv2.destroyAllWindows()
+        if len(path) > 0:
+            vid_capture = cv2.VideoCapture(path)
+            VideoPlayerWindow(self.root, vid_capture)
         
     def captureVideo(self):
         print('captureVideo')
@@ -86,16 +54,12 @@ class Menu_win:
         
     
     def start(self):
-        self.draw_widgets()
+        self.pack()
         self.root.mainloop()
 
-    def draw_widgets(self):
-        hmm = StringVar(value="Input")
-        btn1 = CTkOptionMenu(self.root, values=[*self.possible_functionality.keys()], variable=hmm, command=self.input_callback)
-        about = CTkButton(self.root, text="about", command=self.about)
-        btn1.pack(side="left")
-        about.pack(side="left")
-
+    def pack(self):
+        self.btn1.pack(side="left")
+        self.about.pack(side="left")
     
     def input_callback(self, choice):
         self.possible_functionality[choice]()

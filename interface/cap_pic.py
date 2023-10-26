@@ -1,6 +1,6 @@
 from  customtkinter import *
 from settings.rgb_bw import Settings
-from interface.widgets.settings import Settings_block
+from interface.widgets.settings import SettingsMenu
 from interface.widgets.display import Output_display
 from interface.widgets.switch_widget import Switch
 from settings.rgb_bw import Settings
@@ -28,7 +28,8 @@ class PicWindow:
         self.output_label = Output_display(self.tab_view.tab("Изображение"))         
 
         self.draw_widgets_main(self.tab_view.tab('Изображение'))
-        self.draw_widgets_settings(self.tab_view.tab("Настройки"))
+        self.settings_menu = SettingsMenu(self.tab_view.tab("Настройки"), [self.hmm.contrast, self.hmm.brightness, self.hmm.red, self.hmm.green, self.hmm.blue])
+        self.settings_menu.pack()
               
     def focus(self):
 
@@ -37,15 +38,8 @@ class PicWindow:
     def draw_widgets_main(self, tab_main):
         
         self.rgb_gray_switch.draw_switch(self.switch_var, self.switch_callback)
-        self.output_label.draw_picture(self.image_cv)       
-    
-    def draw_widgets_settings(self, tab_settings):
+        self.output_label.draw_picture(self.image_cv)
 
-        Settings_block(tab_settings, 'Интенсивность').draw_slider(-127, 127, command=self.hmm.contrast)
-        Settings_block(tab_settings, 'Яркость').draw_slider(-127, 127, command=self.hmm.brightness)
-        Settings_block(tab_settings, 'Красный').draw_slider(-127, 127, command=self.hmm.red)
-        Settings_block(tab_settings, 'Зеленый').draw_slider(-127, 127, command=self.hmm.green)
-        Settings_block(tab_settings, 'Синий').draw_slider(-127, 127, command=self.hmm.blue)
 
     def switch_callback(self):
         

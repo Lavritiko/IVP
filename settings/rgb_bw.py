@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from interface.widgets.settings import Settings_block
 
 class Settings:
     def __init__(self, img):
@@ -22,6 +21,8 @@ class Settings:
         self.img = self.img2 * (self.beta_cnt / 127 + 1) - self.beta_cnt + value
         self.img = np.uint8(np.clip(self.img, 0, 255))
         self.alpha_br = value
+        
+        print(1111)
 
         return self.img
         

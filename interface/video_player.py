@@ -4,10 +4,10 @@ from PIL import Image, ImageTk
 from tkinter import filedialog
 from interface.widgets.switch_widget import Switch
 from interface.widgets.video_screen import VideoScreen
-from interface.widgets.settings import Settings_block
+from interface.widgets.settings import SettingsMenu
 from settings.rgb_bw import Settings
-
-class VideoPlayer():
+import tkinter as tk
+class VideoPlayerWindow():
     def __init__(self, master, video_capture, title='Child', resizable=(False, False)):
         self.master = master
         self.video_capture = video_capture
@@ -27,60 +27,58 @@ class VideoPlayer():
         self.tab_view.add('Настройки')
         
         self.video_screan = VideoScreen(self.tab_view.tab('Видео'), video_capture)
-        self.hmm = Settings(self.video_capture)
+        
+        # self.hmm = Settings(self.video_capture)
+        
         self.switch_var = StringVar(value='off')
         self.rgb_gray_switch = Switch(self.tab_view.tab('Видео'), 'RGB-Gray')
 
-        self.bt = CTkButton(self.tab_view.tab('Видео'), text='stop', command=self.video_screan.stop_start)
-        self.sl = CTkSlider(self.tab_view.tab('Видео'), from_=0.2, to=3, command=self.video_screan.set_delay)
+        
+        self.bt = CTkButton(self.tab_view.tab('Видео'), text='stop', command=self.pressing_button_stop_start)
+        self.fps = tk.IntVar()
+        self.sl = CTkSlider(self.tab_view.tab('Видео'), 
+                            from_=1, to=100, number_of_steps=99,  
+                            variable=self.fps, 
+                            command=self.video_screan.set_delay)
         
         # self.slider = CTkSlider(self.root, from_=0, to=100)
-        
+        self.settings = SettingsMenu(self.tab_view.tab("Настройки"))
         
         self.draw_widjets()
-        self.draw_widgets_settings(self.tab_view.tab("Настройки"))
         
+
         
+    def pressing_button_stop_start(self, *args, **kwargs): 
+        if self.bt._text == 'stop':
+            self.bt.configure(text='start')
+        else:
+            self.bt.configure(text='stop')
+        return self.video_screan.stop_start(*args, **kwargs)
+    
     def draw_widjets(self):
         self.root.grab_set() 
         self.tab_view.pack()
+        
+        # =============== Видео ========================
         self.rgb_gray_switch.draw_switch(self.switch_var, self.switch_callback)
         self.video_screan.pack()
         self.bt.pack()
         self.sl.pack()
-
-    def draw_widgets_settings(self, tab_settings):
-
-        Settings_block(tab_settings, 'Интенсивность').draw_slider(-127, 127, command=self.hmm.contrast)
-        Settings_block(tab_settings, 'Яркость').draw_slider(-127, 127, command=self.hmm.brightness)
-        Settings_block(tab_settings, 'Красный').draw_slider(-127, 127, command=self.hmm.red)
-        Settings_block(tab_settings, 'Зеленый').draw_slider(-127, 127, command=self.hmm.green)
-        Settings_block(tab_settings, 'Синий').draw_slider(-127, 127, command=self.hmm.blue)
         
-    def start(self):
-        self.root.mainloop()
-        
-    def switch_callback(self):
-        # if self.switch_var.get() == 'on':
-        #     vid = self.hmm.gray()
-        #     print(vid)
-        #     self.video_screan.on_change(vid)
+        # =============== Настройки ==================
+        # self.settings.pack()
 
-        # else:
-        #     self.video_screan.on_change(self.video_capture)
         
+    def switch_callback(self):    
         if self.switch_var.get() == 'on':
             pass
         else:
             pass
           
-# if __name__ == '__main__':
-#     # window = tk.CTk()
+if __name__ == '__main__':
     
-#     path = filedialog.askopenfilename()
-#     video_capture = cv.VideoCapture(path)
+    path = filedialog.askopenfilename()
+    video_capture = cv.VideoCapture(path)
     
-#     a = VideoPlayer(None, video_capture)
-    
-#     # window.mainloop()
-#     a.start()
+    a = VideoPlayerWindow(None, video_capture)
+    a.root.mainloop()

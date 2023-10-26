@@ -11,25 +11,25 @@ class VideoScreen():
         
         h = self.video_capture.get(cv.CAP_PROP_FRAME_HEIGHT)
         w = self.video_capture.get(cv.CAP_PROP_FRAME_WIDTH)
-        self.norm_fps = int(1000 / self.video_capture.get(cv.CAP_PROP_FPS))
-        self.delay = self.norm_fps
         
-        self.root = tk.CTkCanvas(master, height=h, width=w)
+        self.norm_fps = self.video_capture.get(cv.CAP_PROP_FPS)
+        self.fps = self.norm_fps
+        
+        self.root = tk.CTkCanvas(self.master, height=h, width=w)
         self.root.configure(background='gray22')
         
-                
+        self.labdel_fps = tk.CTkLabel(master, text='1')
         self.play = True
         self.update()
     
 
-    def set_delay(self, koef):
-        self.delay = int(self.norm_fps / koef)
+    def set_delay(self, fps: int):
+        self.fps = fps
+        self.labdel_fps.configure(text=str(fps))
+        print(fps)
     
     
-    def update(self, vid=None):
-        if vid is not None:
-            self.video_capture = vid
-            
+    def update(self):
         if self.play:
             ret, frame = self.video_capture.read()
         
@@ -40,33 +40,36 @@ class VideoScreen():
             else:
                 self.video_capture.set(cv.CAP_PROP_POS_MSEC, 0)
 
-        self.master.after(self.delay, self.update)
+        
+        
+        self.master.after(int(1000 / self.fps), self.update)
         
     def stop_start(self):
         self.play = not self.play
         
-
         
     def pack(self):
         self.root.pack()
-            
+        self.labdel_fps.pack()
+
         
           
-# if __name__ == '__main__':
-#     window = tk.CTk()
+if __name__ == '__main__':
+    window = tk.CTk()
     
-#     path = filedialog.askopenfilename()
-#     video_capture = cv.VideoCapture(path)
-#     window.configure(background='gray22')
-#     video = VideoScreen(window, video_capture)
+    path = filedialog.askopenfilename()
+    video_capture = cv.VideoCapture(path)
+    window.configure(background='gray22')
+    video = VideoScreen(window, video_capture)
     
-#     bt = tk.CTkButton(window, text='stop', command=video.stop_start)
-#     sl = tk.CTkSlider(window, from_=0.2, to=3, command=video.set_delay)
+    bt = tk.CTkButton(window, text='stop', command=video.stop_start)
+    sl = tk.CTkSlider(window, from_=1, to=100, number_of_steps=99, command=video.set_delay)
+
     
-#     video.pack()
-#     bt.pack(pady=10)
-#     sl.pack(pady=10)
-#     # window.mainloop()
+    video.pack()
+    bt.pack(pady=10)
+    sl.pack(pady=10)
+    # window.mainloop()
     
-#     window.mainloop()
+    window.mainloop()
     
