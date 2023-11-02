@@ -1,6 +1,6 @@
 from  customtkinter import *
 import pyautogui
-from interface.cap_pic import PicWindow
+from interface.picture_window import PicWindow
 from PIL import Image
 from PIL import ImageTk
 import cv2

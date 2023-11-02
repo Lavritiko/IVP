@@ -1,9 +1,8 @@
 from  customtkinter import *
-from settings.rgb_bw import Settings
 from interface.widgets.settings import SettingsMenu
-from interface.widgets.display import Output_display
+from interface.widgets.pictute_screen import Output_display
 from interface.widgets.switch_widget import Switch
-from settings.rgb_bw import Settings
+from settings.rgb_bw import GraySettings, Gray
 
 class PicWindow:
     def __init__(self, parent, width, height, image_cv=None, title='Child', resizable=(False, False)):
@@ -16,7 +15,7 @@ class PicWindow:
         self.focus()
         
         self.image_cv = image_cv
-        self.hmm = Settings(self.image_cv)
+        self.gray_old = GraySettings(self.image_cv)
         self.switch_var = StringVar(value='off')
 
         self.tab_view = CTkTabview(self.root)
@@ -26,9 +25,9 @@ class PicWindow:
         
         self.rgb_gray_switch = Switch(self.tab_view.tab('Изображение'), 'RGB-Gray')
         self.output_label = Output_display(self.tab_view.tab("Изображение"))         
-
+        self.grey = Gray()
         self.draw_widgets_main(self.tab_view.tab('Изображение'))
-        self.settings_menu = SettingsMenu(self.tab_view.tab("Настройки"), [self.hmm.contrast, self.hmm.brightness, self.hmm.red, self.hmm.green, self.hmm.blue])
+        self.settings_menu = SettingsMenu(self.tab_view.tab("Настройки"), [self.gray_old.contrast, self.gray_old.brightness, self.gray_old.red, self.gray_old.green, self.gray_old.blue])
         self.settings_menu.pack()
               
     def focus(self):
@@ -44,9 +43,27 @@ class PicWindow:
     def switch_callback(self):
         
         if self.switch_var.get() == 'on':
-            img = self.hmm.gray()
+            # img = self.hmm.gray()
+            self.grey.blue = self.settings_menu.blue
+            self.grey.red = self.settings_menu.red
+            self.grey.green = self.settings_menu.green
+            self.grey.alpha_br = self.settings_menu.brightness
+            self.grey.beta_cnt = self.settings_menu.intensity
+
+            img = self.grey.hmm2(self.image_cv)
             print(img)
             self.output_label.on_change(img)
 
         else:
             self.output_label.on_change(self.image_cv)
+
+
+    # def switch_callback(self):
+        
+    #     if self.switch_var.get() == 'on':
+    #         img = self.gray.gray()
+    #         print(img)
+    #         self.output_label.on_change(img)
+
+    #     else:
+    #         self.output_label.on_change(self.image_cv)

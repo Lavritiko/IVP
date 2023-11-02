@@ -1,7 +1,8 @@
 from  customtkinter import *
 import tkinter as tk
 
-from settings.rgb_bw import Settings
+from settings.rgb_bw import GraySettings
+
 class SettingsBlock:
     def __init__(self, master, name, min, max, command=None):
         self.root = master
