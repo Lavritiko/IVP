@@ -36,7 +36,8 @@ class SettingsMenu:
         if master is None:
             master = CTk()    
         self.root = master
-        
+        if commands is None:
+            commands = [None] * 5
         self.__intensity_block = SettingsBlock(self.root, 'Интенсивность', -127, 127, commands[0])
         self.__brightness_block = SettingsBlock(self.root, 'Яркость', -127, 127, commands[1])
         self.__red_block = SettingsBlock(self.root, 'Красный', -127, 127, commands[2])

@@ -21,8 +21,6 @@ class Settings:
         self.img = self.img2 * (self.beta_cnt / 127 + 1) - self.beta_cnt + value
         self.img = np.uint8(np.clip(self.img, 0, 255))
         self.alpha_br = value
-        
-        print(1111)
 
         return self.img
         
@@ -59,3 +57,35 @@ class Settings:
         return self.img
 
 
+
+def gray(img, alpha_br, beta_cnt, red, green, blue):
+    blue_channel, green_channel, red_channel = cv2.split(img)
+
+    v = blue / 127
+    chan = blue_channel
+    sig = np.sign(blue)
+    blue_channel =  chan + (1 + sig) / 2 * v * (255 - chan) + \
+                         + (1 - sig) / 2 * v * chan
+                         
+    v = green / 127
+    chan = green_channel
+    sig = np.sign(green)
+    green_channel = chan + (1 + sig) / 2 * v * (255 - chan) + \
+                         + (1 - sig) / 2 * v * chan
+                         
+    v = red / 127
+    chan = red_channel
+    sig = np.sign(red)
+    red_channel =   chan + (1 + sig) / 2 * v * (255 - chan) + \
+                         + (1 - sig) / 2 * v * chan
+
+    blue_channel = np.uint8(np.clip(blue_channel, 0, 255))
+    green_channel = np.uint8(np.clip(green_channel, 0, 255))
+    red_channel = np.uint8(np.clip(red_channel, 0, 255))
+
+    img = cv2.merge((blue_channel, green_channel, red_channel))
+
+    img = img * (beta_cnt / 127 + 1) - beta_cnt + alpha_br
+    img = np.uint8(np.clip(img, 0, 255))
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return gray_img
