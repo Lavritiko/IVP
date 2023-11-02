@@ -6,6 +6,8 @@ from interface.video_player import  VideoPlayerWindow
 from tkinter import filedialog
 import cv2
 
+import pyautogui
+import numpy as np
 from interface.video_player import VideoPlayerWindow
 
 class Menu_win:
@@ -50,7 +52,22 @@ class Menu_win:
         
     def captureVideo(self):
         print('captureVideo')
-        raise Exception('functionality in development')
+        SCREEN_SIZE = (1920, 1080)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter('output.avi', fourcc, 20.0, (SCREEN_SIZE))
+        while True:
+            img = pyautogui.screenshot(region=(0,0, 1920, 1080))
+            frame = np.array(img)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            out.write(frame)
+            cv2.imshow('screanshot', frame)
+            if cv2.waitKey(1) == ord('q'):
+                break
+        cv2.destroyAllWindows()
+        out.release()
+        vid_capture = cv2.VideoCapture('output.avi')
+        VideoPlayerWindow(self.root, vid_capture)
+        # raise Exception('functionality in development')
         
     
     def start(self):
