@@ -20,7 +20,7 @@ class VideoScreen():
         self.labdel_fps = tk.CTkLabel(master, text=str(self.fps))
         self.play = True
         self.is_gray = False
-        self.br, self.cnt, self.r, self.g, self.b = 0 , 0, 0, 0, 0
+        self.br, self.cnt, self.r, self.g, self.b = 0, 0, 0, 0, 0
         
         self.update()
     

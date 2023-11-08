@@ -1,7 +1,7 @@
 from  customtkinter import *
 import tkinter as tk
-
 from settings.rgb_bw import Settings
+
 class SettingsBlock:
     def __init__(self, master, name, min, max, command=None):
         self.root = master
@@ -25,9 +25,9 @@ class SettingsBlock:
         return '{: .2f}'.format(self.var.get())
     
     def pack(self):
-        self.lable_name.pack(pady=5)
-        self.slider.pack(pady=5)
-        self.lable_var.pack(pady=5)
+        self.lable_name.pack()
+        self.slider.pack()
+        self.lable_var.pack()
         
         
         

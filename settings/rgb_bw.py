@@ -56,8 +56,7 @@ class Settings:
         
         return self.img
 
-
-
+    
 def gray(img, alpha_br, beta_cnt, red, green, blue):
     blue_channel, green_channel, red_channel = cv2.split(img)
 

@@ -1,7 +1,7 @@
 from  customtkinter import *
 from interface.widgets.message_box import MessageBox
-from interface.cap_pic import PicWindow
-from interface.capture_p import CapturePic
+from interface.picture_window import PicWindow
+from interface.capture_picture import CapturePic
 from interface.video_player import  VideoPlayerWindow
 from tkinter import filedialog
 import cv2

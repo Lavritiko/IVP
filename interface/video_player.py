@@ -7,6 +7,7 @@ from interface.widgets.video_screen import VideoScreen
 from interface.widgets.settings import SettingsMenu
 from settings.rgb_bw import gray
 import tkinter as tk
+
 class VideoPlayerWindow():
     def __init__(self, master, video_capture, title='Child', resizable=(False, False)):
         self.master = master
