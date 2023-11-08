@@ -2,10 +2,10 @@ import cv2 as cv
 from  customtkinter import *
 from PIL import Image, ImageTk
 from tkinter import filedialog
-from interface.widgets.switch_widget import Switch
+from interface.widgets.switch_widget import MySwitch
 from interface.widgets.video_screen import VideoScreen
 from interface.widgets.settings import SettingsMenu
-from settings.rgb_bw import GraySettings
+from settings.rgb_bw import gray
 import tkinter as tk
 
 class VideoPlayerWindow():
@@ -23,26 +23,29 @@ class VideoPlayerWindow():
         
         # ========================== Create wigets ==========================
         
-        self.tab_view = CTkTabview(self.root)
+        self.tab_view = CTkTabview(self.root, command=self.select_menu)
         self.tab_view.add('Видео')
         self.tab_view.add('Настройки')
         
         self.video_screan = VideoScreen(self.tab_view.tab('Видео'), video_capture)
         
-        # self.hmm = Settings(self.video_capture)
+        self.switch_is_gray_var = StringVar(value='1')
         
-        self.switch_var = StringVar(value='off')
-        self.rgb_gray_switch = Switch(self.tab_view.tab('Видео'), 'RGB-Gray')
+        self.rgb_gray_switch = MySwitch(self.tab_view.tab('Видео'),
+                                        text='RGB-Gray',
+                                        variable=self.switch_is_gray_var,
+                                        command=self.switch_callback)
 
         
         self.bt = CTkButton(self.tab_view.tab('Видео'), text='stop', command=self.pressing_button_stop_start)
         self.fps = tk.IntVar()
         self.sl = CTkSlider(self.tab_view.tab('Видео'), 
                             from_=1, to=100, number_of_steps=99,  
-                            variable=self.fps, 
-                            command=self.video_screan.set_delay)
+                            variable=self.fps,
+                            command=self.video_screan.set_delay,
+                            )
+        self.sl.set(self.video_screan.fps)
         
-        # self.slider = CTkSlider(self.root, from_=0, to=100)
         self.settings = SettingsMenu(self.tab_view.tab("Настройки"))
         
         self.draw_widjets()
@@ -61,20 +64,29 @@ class VideoPlayerWindow():
         self.tab_view.pack()
         
         # =============== Видео ========================
-        self.rgb_gray_switch.draw_switch(self.switch_var, self.switch_callback)
+        self.rgb_gray_switch.pack()
         self.video_screan.pack()
         self.bt.pack()
         self.sl.pack()
         
         # =============== Настройки ==================
-        # self.settings.pack()
+        self.settings.pack()
 
+    def select_menu(self):
+        if self.switch_is_gray_var.get() == '1':
+            self.rgb_gray_switch.toggle()
         
-    def switch_callback(self):    
-        if self.switch_var.get() == 'on':
-            pass
+        
+    def switch_callback(self):
+        if self.switch_is_gray_var.get() == '1':
+            self.video_screan.is_gray = True
+            self.video_screan.br = self.settings.brightness
+            self.video_screan.cnt = self.settings.intensity
+            self.video_screan.r = self.settings.red
+            self.video_screan.g = self.settings.green
+            self.video_screan.b = self.settings.blue
         else:
-            pass
+            self.video_screan.is_gray = False
           
 if __name__ == '__main__':
     

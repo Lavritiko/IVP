@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-class GraySettings:
+class Settings:
     def __init__(self, img):
         
         self.img = img
@@ -59,31 +59,34 @@ class GraySettings:
         return self.img
 
     
-class Gray:
-    def __init__(self,):
-        self.beta_cnt = 30
-        self.alpha_br = 50
+def gray(img, alpha_br, beta_cnt, red, green, blue):
+    blue_channel, green_channel, red_channel = cv2.split(img)
 
-        self.brightness = 0
-        self.contrast = 0
-        self.red = 0
-        self.green = 0
-        self.blue = 0
-        
-    def hmm2(self, img):
-        blue_channel, green_channel, red_channel = cv2.split(img)
+    v = blue / 127
+    chan = blue_channel
+    sig = np.sign(blue)
+    blue_channel =  chan + (1 + sig) / 2 * v * (255 - chan) + \
+                         + (1 - sig) / 2 * v * chan
+                         
+    v = green / 127
+    chan = green_channel
+    sig = np.sign(green)
+    green_channel = chan + (1 + sig) / 2 * v * (255 - chan) + \
+                         + (1 - sig) / 2 * v * chan
+                         
+    v = red / 127
+    chan = red_channel
+    sig = np.sign(red)
+    red_channel =   chan + (1 + sig) / 2 * v * (255 - chan) + \
+                         + (1 - sig) / 2 * v * chan
 
-        blue_channel = ( red_channel * self.blue / 127 ) + self.blue # (1 + val / 127) * r
-        green_channel = red_channel * self.green / 127 + self.green
-        red_channel = red_channel * self.red / 127 + self.red
+    blue_channel = np.uint8(np.clip(blue_channel, 0, 255))
+    green_channel = np.uint8(np.clip(green_channel, 0, 255))
+    red_channel = np.uint8(np.clip(red_channel, 0, 255))
 
-        blue_channel = np.uint8(np.clip(blue_channel, 0, 255))
-        green_channel = np.uint8(np.clip(green_channel, 0, 255))
-        red_channel = np.uint8(np.clip(red_channel, 0, 255))
+    img = cv2.merge((blue_channel, green_channel, red_channel))
 
-        img = cv2.merge((blue_channel, green_channel, red_channel))
-
-        img = img * (self.beta_cnt / 127 + 1) - self.beta_cnt + self.alpha_br
-        img = np.uint8(np.clip(img, 0, 255))
-        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        return gray_img
+    img = img * (beta_cnt / 127 + 1) - beta_cnt + alpha_br
+    img = np.uint8(np.clip(img, 0, 255))
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return gray_img

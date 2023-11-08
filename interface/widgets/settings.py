@@ -1,7 +1,6 @@
 from  customtkinter import *
 import tkinter as tk
-
-from settings.rgb_bw import GraySettings
+from settings.rgb_bw import Settings
 
 class SettingsBlock:
     def __init__(self, master, name, min, max, command=None):
@@ -26,9 +25,9 @@ class SettingsBlock:
         return '{: .2f}'.format(self.var.get())
     
     def pack(self):
-        self.lable_name.pack(pady=5)
-        self.slider.pack(pady=5)
-        self.lable_var.pack(pady=5)
+        self.lable_name.pack()
+        self.slider.pack()
+        self.lable_var.pack()
         
         
         
@@ -37,7 +36,8 @@ class SettingsMenu:
         if master is None:
             master = CTk()    
         self.root = master
-        
+        if commands is None:
+            commands = [None] * 5
         self.__intensity_block = SettingsBlock(self.root, 'Интенсивность', -127, 127, commands[0])
         self.__brightness_block = SettingsBlock(self.root, 'Яркость', -127, 127, commands[1])
         self.__red_block = SettingsBlock(self.root, 'Красный', -127, 127, commands[2])

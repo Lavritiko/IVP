@@ -2,7 +2,7 @@ import cv2 as cv
 import customtkinter as tk
 from PIL import Image, ImageTk
 from tkinter import filedialog
-
+from settings.rgb_bw import gray
 
 class VideoScreen():
     def __init__(self, master, video_capture) -> None:
@@ -14,12 +14,14 @@ class VideoScreen():
         
         self.norm_fps = self.video_capture.get(cv.CAP_PROP_FPS)
         self.fps = self.norm_fps
-        
         self.root = tk.CTkCanvas(self.master, height=h, width=w)
         self.root.configure(background='gray22')
         
-        self.labdel_fps = tk.CTkLabel(master, text='1')
+        self.labdel_fps = tk.CTkLabel(master, text=str(self.fps))
         self.play = True
+        self.is_gray = False
+        self.br, self.cnt, self.r, self.g, self.b = 0, 0, 0, 0, 0
+        
         self.update()
     
 
@@ -34,19 +36,18 @@ class VideoScreen():
             ret, frame = self.video_capture.read()
         
             if ret:
+                if self.is_gray:
+                    frame = gray(frame, self.br, self.cnt, self.r, self.g, self.b)
                 frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
                 self.photo = ImageTk.PhotoImage(image=Image.fromarray(frame))
                 self.root.create_image(0, 0, image=self.photo, anchor=tk.NW)
             else:
                 self.video_capture.set(cv.CAP_PROP_POS_MSEC, 0)
 
-        
-        
         self.master.after(int(1000 / self.fps), self.update)
         
     def stop_start(self):
         self.play = not self.play
-        
         
     def pack(self):
         self.root.pack()
@@ -69,7 +70,6 @@ if __name__ == '__main__':
     video.pack()
     bt.pack(pady=10)
     sl.pack(pady=10)
-    # window.mainloop()
     
     window.mainloop()
     
