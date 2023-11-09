@@ -2,6 +2,7 @@ from  customtkinter import *
 from interface.widgets.message_box import MessageBox
 from interface.picture_window import PicWindow
 from interface.capture_picture import CapturePic
+from interface.capture_video import CaptureVideo
 from interface.video_player import  VideoPlayerWindow
 from tkinter import filedialog
 import cv2
@@ -50,23 +51,25 @@ class Menu_win:
             vid_capture = cv2.VideoCapture(path)
             VideoPlayerWindow(self.root, vid_capture)
         
+        
     def captureVideo(self):
         print('captureVideo')
-        SCREEN_SIZE = (1920, 1080)
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter('output.avi', fourcc, 20.0, (SCREEN_SIZE))
-        while True:
-            img = pyautogui.screenshot(region=(0,0, 1920, 1080))
-            frame = np.array(img)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            out.write(frame)
-            cv2.imshow('screanshot', frame)
-            if cv2.waitKey(1) == ord('q'):
-                break
-        cv2.destroyAllWindows()
-        out.release()
-        vid_capture = cv2.VideoCapture('output.avi')
-        VideoPlayerWindow(self.root, vid_capture)
+        CaptureVideo(self.root).create_screen_canvas()
+        # SCREEN_SIZE = (1920, 1080)
+        # fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        # out = cv2.VideoWriter('output.avi', fourcc, 20.0, (SCREEN_SIZE))
+        # while True:
+        #     img = pyautogui.screenshot(region=(0,0, 1920, 1080))
+        #     frame = np.array(img)
+        #     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        #     out.write(frame)
+        #     cv2.imshow('screanshot', frame)
+        #     if cv2.waitKey(1) == ord('q'):
+        #         break
+        # cv2.destroyAllWindows()
+        # out.release()
+        # vid_capture = cv2.VideoCapture('output.avi')
+        # VideoPlayerWindow(self.root, vid_capture)
         # raise Exception('functionality in development')
         
     
