@@ -4,6 +4,7 @@ from interface.picture_window import PicWindow
 from interface.capture_picture import CapturePic
 from interface.capture_video import CaptureVideo
 from interface.video_player import  VideoPlayerWindow
+from interface.modeling_window import ModelCreatingWindow
 from tkinter import filedialog
 import cv2
 
@@ -30,9 +31,10 @@ class Menu_win:
             key: the text of the menu element and 
             value: the function to be called
         '''
-        
+       
         self.hmm = StringVar(value="Input")
         self.btn1 = CTkOptionMenu(self.root, values=[*self.possible_functionality.keys()], variable=self.hmm, command=self.input_callback)
+        self.modeling = CTkButton(self.root, text="Modeling", command=self.modeling)
         self.about = CTkButton(self.root, text="about", command=self.about)
     
     def selectPicture(self):
@@ -79,10 +81,14 @@ class Menu_win:
 
     def pack(self):
         self.btn1.pack(side="left")
+        self.modeling.pack(side="left")
         self.about.pack(side="left")
     
     def input_callback(self, choice):
         self.possible_functionality[choice]()
+
+    def modeling(self):
+        ModelCreatingWindow(self.root, 'Моделирование')
     
     def about(self):
         info = "Created by: \n Lavrentsova Anna, Feklin Nikita XD \n  2023"
