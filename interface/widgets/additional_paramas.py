@@ -16,15 +16,18 @@ class AdditionalParamasFrame:
         self.input_i.insert(0, '0')
         self.input_j        = CTkEntry(self.frame, placeholder_text='j0', width=50)
         self.input_j.insert(0, '0')
-        self.input_r        = CTkEntry(self.frame, placeholder_text='R', width=70)
+        self.input_r        = CTkEntry(self.frame, placeholder_text='R', width=50)
         self.input_r.insert(0, '0')
-        self.input_N        = CTkEntry(self.frame, placeholder_text='кол-во', width=70)
+        self.input_N        = CTkEntry(self.frame, placeholder_text='кол-во', width=50)
         self.input_N.insert(0, '0')
-        self.input_a        = CTkEntry(self.frame, placeholder_text='размер', width=70)
+        self.input_a        = CTkEntry(self.frame, placeholder_text='размер', width=50)
         self.input_a.insert(0, '0')
-        
+        self.input_t        = CTkEntry(self.frame, placeholder_text='t', width=50)
+        self.input_t.insert(0, '0')
+        self.input_delta_r  = CTkEntry(self.frame, placeholder_text='delta_r', width=60)
+        self.input_delta_r.insert(0, '0')
         self.frame.grid(row=4, column=0, sticky=NSEW, padx=10, pady=10, ipady=5)
-        self.input_label.grid(row=0, column=0, sticky=NSEW, padx=10, pady=10)
+        self.input_label.grid(row=0, column=0, sticky=NSEW, padx=10, pady=5)
 
     def forget(self):
         self.input_i.grid_forget()
@@ -32,6 +35,8 @@ class AdditionalParamasFrame:
         self.input_r.grid_forget()
         self.input_N.grid_forget()
         self.input_a.grid_forget()
+        self.input_t.grid_forget()
+        self.input_delta_r.grid_forget()
 
     def grid_impulse(self):
         self.input_label.configure(text="Введите координаты импульса:")
@@ -50,6 +55,8 @@ class AdditionalParamasFrame:
         self.input_i.grid(row=1, column=0, sticky=W, padx=10)
         self.input_j.grid(row=1, column=0, padx=10)
         self.input_r.grid(row=2, column=0, sticky=W, padx=10, pady=5)
+        self.input_delta_r.grid(row=2, column=0, padx=10, pady=5)
+        self.input_t.grid(row=2, column=1, pady=5)
         
 
     def grid_square(self):       

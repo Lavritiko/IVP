@@ -5,6 +5,8 @@ from PIL import ImageTk
 import numpy as np
 from interface.widgets.additional_paramas import AdditionalParamasFrame
 from interface.picture_window import PicWindow
+from interface.widgets.preview_screen import PreviewScreen
+from interface.video_player import VideoPlayerWindow
 
 class ModelCreatingWindow():
     def __init__(self, parent, title):
@@ -68,8 +70,7 @@ class ModelCreatingWindow():
         self.preview_frame          = CTkFrame(self.root, corner_radius=0, fg_color="transparent")
         self.previw_label           = CTkLabel(self.preview_frame, text="Предварительный просмотр",
                                                 font=CTkFont(size=15, weight='bold'))
-        self.preview_canvas         = CTkCanvas(self.preview_frame, width=350, height=350, background='gray22')
-
+        self.preview_canvas         = PreviewScreen(self.preview_frame)
 
         self.accept_button          = CTkButton(self.preview_frame, text="Принять", command=self.accept_button_callback)
         
@@ -83,7 +84,7 @@ class ModelCreatingWindow():
         ################ 1 блок. Настройка моделирования ############################
         self.modeling_frame.grid(       row=0, column=0, sticky=NSEW)
         self.modeling_frame.grid_rowconfigure(6, weight=1)
-        self.modeling_frame_label.grid( row=0, column=0, pady=20)
+        self.modeling_frame_label.grid( row=0, column=0, pady=10)
         
         
         ################# 1.1 блок. Размер изображения #############################
@@ -115,25 +116,58 @@ class ModelCreatingWindow():
 
 
     def model_button_callback(self):
-        w = int(self.size_input_x.get())
-        h = int(self.size_input_y.get())
-        img = np.zeros((h,w,3), np.uint8)
+        self.preview_canvas.play = False
+
+        self.preview_canvas.images = [] #Очистка буфера видеоизображений
+
+        w        = self.preview_canvas.weight = int(self.size_input_x.get())
+        h        = self.preview_canvas.height = int(self.size_input_y.get())
+        r        = int(self.additional_input_frame.input_r.get())
+        delta_r  = int(self.additional_input_frame.input_delta_r.get())
+        T        = int(self.additional_input_frame.input_t.get())
+
+        self.img = np.zeros((h,w,3), np.uint8)
+
+        x        =   float(self.additional_input_frame.input_i.get()) +  w / 2
+        y        = - float(self.additional_input_frame.input_j.get()) +  h / 2
 
         if self.model_type == 'Задержанный единичный импульс':
-            x =   float(self.additional_input_frame.input_i.get()) +  w / 2
-            y = - float(self.additional_input_frame.input_j.get()) +  h / 2
-            cv2.circle(img, (int(x), int(y)), 3,(240, 10, 0), -1)
-            cv2.imwrite('model.png', img)
-            image = Image.open('model.png')
-            image = image.resize((350, 350))
-            image = ImageTk.PhotoImage(image)
+            cv2.circle(self.img, (int(x), int(y)), 3,(255, 255, 255), -1)
+        if self.model_type == 'Задержанный единичный скачок':
+            cv2.rectangle(self.img, (int(x), int(y)), (h, 0), (255, 255, 255), -1)
 
-            self.preview_canvas.create_image(0, 0,anchor=NW, image=image)
-            self.root.mainloop()
+        self.preview_canvas.img = self.img
+
+        if self.model_type == 'Одиночный круг':
+            self.preview_canvas.t = 0
+            frames = [] # матрица картинок
+            self.preview_canvas.play = True
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 1, (w, h))
+            for t in range(1, T+1):
+                r_t      = int(r + delta_r * np.cos(2 * np.pi * t / T))
+                self.img = np.zeros((h, w, 3), np.uint8) # костыль, чтобы каждый раз на пустую матрицу делала картинку
+                frames.append(cv2.circle(self.img, (int(x), int(y)), r_t,(255, 255, 255), -1))
+                out.write(self.img)
+                print(r_t)
+
+                # cv2.imwrite(f'hmm{t}.jpg', self.img) # сохранить ряд картинок для проверки видео
+            out.release()
+            self.preview_canvas.video = frames
+            
+        self.preview_canvas.update()               
+            
+            # cv2.imwrite('model.png', img)
+            # image = Image.open('model.png')
+            # image = image.resize((350, 350))
+            # image = ImageTk.PhotoImage(image)
     
     def accept_button_callback(self):
-        image = cv2.imread('model.png')
-        PicWindow(self.root, 1024, 768, image_cv=image)
+        # image = cv2.imread('model.png')
+        if self.preview_canvas.play:
+            vid_model = cv2.VideoCapture('outpy.avi')
+            VideoPlayerWindow(self.root, vid_model)
+        else:
+            PicWindow(self.root, 1024, 768, image_cv=self.img)
     
     def delayed_single_impulse(self):
         self.additional_input_frame.forget()
