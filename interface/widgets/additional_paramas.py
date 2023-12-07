@@ -23,7 +23,7 @@ class AdditionalParamasFrame:
         self.input_a        = CTkEntry(self.frame, placeholder_text='размер', width=50)
         self.input_a.insert(0, '0')
         self.input_t        = CTkEntry(self.frame, placeholder_text='t', width=50)
-        self.input_t.insert(0, '0')
+        self.input_t.insert(0, '1')
         self.input_delta_r  = CTkEntry(self.frame, placeholder_text='delta_r', width=60)
         self.input_delta_r.insert(0, '0')
         self.frame.grid(row=4, column=0, sticky=NSEW, padx=10, pady=10, ipady=5)
@@ -61,9 +61,14 @@ class AdditionalParamasFrame:
 
     def grid_square(self):       
         self.input_label.configure(text="Введите координаты и сторону квадрата:")
+        
         self.input_i.grid(row=1, column=0, sticky=W, padx=10)
         self.input_j.grid(row=1, column=0, padx=10)
+        
         self.input_a.grid(row=2, column=0, sticky=W, padx=10, pady=5)
+        self.input_delta_r.grid(row=2, column=0, padx=10, pady=5)
+        
+        self.input_t.grid(row=2, column=1, pady=5)
         
     def grid_chess(self):  
         self.input_label.configure(text="Введите колиество клеток в ряду и сторону квадрата:")

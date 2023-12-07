@@ -113,54 +113,93 @@ class ModelCreatingWindow():
         self.preview_canvas.grid(   row=1, column=0, pady=20)
         self.accept_button.grid(    row=2, column=0, pady=10, padx=20, sticky=SE)
 
-
-
     def model_button_callback(self):
+        try:
+            w        = self.preview_canvas.weight = int(self.size_input_x.get())
+            h        = self.preview_canvas.height = int(self.size_input_y.get())
+            r        = int(self.additional_input_frame.input_r.get())
+            delta_r  = int(self.additional_input_frame.input_delta_r.get())
+            T        = int(self.additional_input_frame.input_t.get())
+            a        = int(self.additional_input_frame.input_a.get())
+            if (T < 1):
+                raise Exception
+        except:
+            return
+        
         self.preview_canvas.play = False
 
         self.preview_canvas.images = [] #Очистка буфера видеоизображений
-
-        w        = self.preview_canvas.weight = int(self.size_input_x.get())
-        h        = self.preview_canvas.height = int(self.size_input_y.get())
-        r        = int(self.additional_input_frame.input_r.get())
-        delta_r  = int(self.additional_input_frame.input_delta_r.get())
-        T        = int(self.additional_input_frame.input_t.get())
-
+        
         self.img = np.zeros((h,w,3), np.uint8)
 
         x        =   float(self.additional_input_frame.input_i.get()) +  w / 2
         y        = - float(self.additional_input_frame.input_j.get()) +  h / 2
-
+        
         if self.model_type == 'Задержанный единичный импульс':
             cv2.circle(self.img, (int(x), int(y)), 3,(255, 255, 255), -1)
-        if self.model_type == 'Задержанный единичный скачок':
+        elif self.model_type == 'Задержанный единичный скачок':
             cv2.rectangle(self.img, (int(x), int(y)), (h, 0), (255, 255, 255), -1)
-
-        self.preview_canvas.img = self.img
-
-        if self.model_type == 'Одиночный круг':
+        elif self.model_type == 'Одиночный круг':
             self.preview_canvas.t = 0
             frames = [] # матрица картинок
             self.preview_canvas.play = True
-            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 1, (w, h))
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 23, (w, h))
             for t in range(1, T+1):
                 r_t      = int(r + delta_r * np.cos(2 * np.pi * t / T))
                 self.img = np.zeros((h, w, 3), np.uint8) # костыль, чтобы каждый раз на пустую матрицу делала картинку
-                frames.append(cv2.circle(self.img, (int(x), int(y)), r_t,(255, 255, 255), -1))
+                cv2.circle(self.img, (int(x), int(y)), r_t,(255, 255, 255), -1)
+                frames.append(self.img)
                 out.write(self.img)
-                print(r_t)
+                # print(r_t)
 
-                # cv2.imwrite(f'hmm{t}.jpg', self.img) # сохранить ряд картинок для проверки видео
             out.release()
             self.preview_canvas.video = frames
+        elif self.model_type == 'Одиночный квадрат':
+            self.preview_canvas.t = 0
+            frames = [] # матрица картинок
+            self.preview_canvas.play = True
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 23, (w, h))
+            for t in range(1, T+1):
+                self.img    = np.zeros((h, w, 3), np.uint8)
+
+                a_t         = a + delta_r * np.cos(2 * np.pi * t / T)
+                print()
+                x0          = int(x - a_t / 2) if ((x - a_t / 2) >  0) else 0
+                x1          = int(x + a_t / 2) if ((x + a_t / 2) <= w) else w
+                y0          = int(y - a_t / 2) if ((y - a_t / 2) >  0) else 0
+                y1          = int(y + a_t / 2) if ((y + a_t / 2) <= h) else h
+                
+                self.img[y0 : y1, x0 : x1, :] = 255
+
+                # self.img[ : x + a_t // 2, y - a_t // 2 : y + a_t // 2, 0] = 255
+                frames.append(self.img)
+                
+                out.write(self.img)
+                # print(r_t)
+
+            out.release()
+            self.preview_canvas.video = frames
+        elif self.model_type == 'Шахматная доска':
+            pass
+        elif self.model_type == 'Круги в узлах прямоугольной решетки':
+            pass
+        elif self.model_type == 'Случайные круги':
+            pass
+        elif self.model_type == 'Белый шум с равномерным распределением':
+            pass
+        elif self.model_type == 'Белый шум с нормальным распределением':
+            pass
+        elif self.model_type == 'Плоская гравитационная волна':
+            pass
+                # cv2.imwrite(f'hmm{t}.jpg', self.img) # сохранить ряд картинок для проверки видео
             
-        self.preview_canvas.update()               
-            
-            # cv2.imwrite('model.png', img)
-            # image = Image.open('model.png')
-            # image = image.resize((350, 350))
-            # image = ImageTk.PhotoImage(image)
-    
+        
+        
+        
+        # self.root.after(int(1000 / 23), self.update)
+        self.preview_canvas.img = self.img
+        # self.update()
+
     def accept_button_callback(self):
         # image = cv2.imread('model.png')
         if self.preview_canvas.play:

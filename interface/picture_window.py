@@ -57,11 +57,11 @@ class PicWindow:
         
         if self.switch_var.get() == '1':
             self.output_picture.is_gray = True
-            self.output_picture.br = self.settings_menu.brightness
+            self.output_picture.br  = self.settings_menu.brightness
             self.output_picture.cnt = self.settings_menu.intensity
-            self.output_picture.r = self.settings_menu.red
-            self.output_picture.g = self.settings_menu.green
-            self.output_picture.b = self.settings_menu.blue
+            self.output_picture.r   = self.settings_menu.red
+            self.output_picture.g   = self.settings_menu.green
+            self.output_picture.b   = self.settings_menu.blue
             self.output_picture.on_change()
 
         else:
