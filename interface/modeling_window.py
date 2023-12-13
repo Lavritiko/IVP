@@ -11,7 +11,7 @@ from interface.video_player import VideoPlayerWindow
 class ModelCreatingWindow():
     def __init__(self, parent, title):
         self.root = CTkToplevel(parent)
-        self.root.geometry("1030x525")
+        self.root.geometry("1030x700")
         self.root.resizable(False, False)
         self.root.title(title)
         self.root.grab_set()
@@ -115,12 +115,16 @@ class ModelCreatingWindow():
 
     def model_button_callback(self):
         try:
-            w        = self.preview_canvas.weight = int(self.size_input_x.get())
-            h        = self.preview_canvas.height = int(self.size_input_y.get())
-            r        = int(self.additional_input_frame.input_r.get())
-            delta_r  = int(self.additional_input_frame.input_delta_r.get())
-            T        = int(self.additional_input_frame.input_t.get())
-            a        = int(self.additional_input_frame.input_a.get())
+            w           = self.preview_canvas.weight = int(self.size_input_x.get())
+            h           = self.preview_canvas.height = int(self.size_input_y.get())
+            r           = int(self.additional_input_frame.input_r.get())
+            delta_r     = int(self.additional_input_frame.input_delta.get())
+            T           = int(self.additional_input_frame.input_T.get())
+            a           = int(self.additional_input_frame.input_a.get())
+            d           = int(self.additional_input_frame.input_D.get())
+            n           = int(self.additional_input_frame.input_N.get())
+            fps         = int(self.additional_input_frame.input_frames.get())
+            time        = int(self.additional_input_frame.input_t.get())
             if (T < 1):
                 raise Exception
         except:
@@ -129,22 +133,28 @@ class ModelCreatingWindow():
         self.preview_canvas.play = False
 
         self.preview_canvas.images = [] #Очистка буфера видеоизображений
+
         
-        self.img = np.zeros((h,w,3), np.uint8)
+        self.img = np.zeros((h, w, 3), np.uint8)
 
         x        =   float(self.additional_input_frame.input_i.get()) +  w / 2
         y        = - float(self.additional_input_frame.input_j.get()) +  h / 2
         
         if self.model_type == 'Задержанный единичный импульс':
             cv2.circle(self.img, (int(x), int(y)), 3,(255, 255, 255), -1)
+
         elif self.model_type == 'Задержанный единичный скачок':
             cv2.rectangle(self.img, (int(x), int(y)), (h, 0), (255, 255, 255), -1)
+
         elif self.model_type == 'Одиночный круг':
             self.preview_canvas.t = 0
             frames = [] # матрица картинок
             self.preview_canvas.play = True
-            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 23, (w, h))
-            for t in range(1, T+1):
+            self.preview_canvas.fps  = fps / time
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), self.preview_canvas.fps, (w, h))
+            
+
+            for t in np.linspace(0, time, fps):
                 r_t      = int(r + delta_r * np.cos(2 * np.pi * t / T))
                 self.img = np.zeros((h, w, 3), np.uint8) # костыль, чтобы каждый раз на пустую матрицу делала картинку
                 cv2.circle(self.img, (int(x), int(y)), r_t,(255, 255, 255), -1)
@@ -154,12 +164,15 @@ class ModelCreatingWindow():
 
             out.release()
             self.preview_canvas.video = frames
+
         elif self.model_type == 'Одиночный квадрат':
             self.preview_canvas.t = 0
             frames = [] # матрица картинок
             self.preview_canvas.play = True
-            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 23, (w, h))
-            for t in range(1, T+1):
+            self.preview_canvas.fps  = fps / time
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), self.preview_canvas.fps, (w, h))
+
+            for t in np.linspace(0, time, fps):
                 self.img    = np.zeros((h, w, 3), np.uint8)
 
                 a_t         = a + delta_r * np.cos(2 * np.pi * t / T)
@@ -179,10 +192,35 @@ class ModelCreatingWindow():
 
             out.release()
             self.preview_canvas.video = frames
+
         elif self.model_type == 'Шахматная доска':
-            pass
+            self.preview_canvas.weight = a * n
+            self.preview_canvas.height = a * n
+            self.img = np.zeros((self.preview_canvas.height, self.preview_canvas.weight, 3), np.uint8)
+            colors = ((255, 255, 255), (0, 0, 0))
+
+            for x in range(n):
+                for y in range(n):
+                    c = (y + x) & 1
+                    x1 = x * a
+                    y1 = y * a
+                    x2 = x1 + a
+                    y2 = y1 + a
+                    cv2.rectangle(self.img, (x1, y1), (x2, y2), colors[c], -1)
+
         elif self.model_type == 'Круги в узлах прямоугольной решетки':
-            pass
+            self.preview_canvas.weight = ((n - 1) * d) + (2 * r)
+            self.preview_canvas.height = ((n - 1) * d) + (2 * r)
+            self.img = np.zeros((self.preview_canvas.height, self.preview_canvas.weight, 3), np.uint8)
+
+            for x in range(n):
+                for y in range(n):
+                    x1 = x * d + r
+                    y1 = y * d + r
+                    # x2 = x1 + a - 2.0 * radius
+                    # y2 = y1 + a - 2.0 * radius
+                    cv2.circle(self.img, (x1, y1), r, (255, 255, 255), -1)
+
         elif self.model_type == 'Случайные круги':
             pass
         elif self.model_type == 'Белый шум с равномерным распределением':
@@ -229,7 +267,8 @@ class ModelCreatingWindow():
         self.additional_input_frame.grid_chess()
     
     def circles_at_nodes(self):
-        pass
+        self.additional_input_frame.forget()
+        self.additional_input_frame.grid_node_circles()
     
     def random_circles(self):
         pass
