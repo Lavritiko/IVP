@@ -209,17 +209,48 @@ class ModelCreatingWindow():
                     cv2.rectangle(self.img, (x1, y1), (x2, y2), colors[c], -1)
 
         elif self.model_type == 'Круги в узлах прямоугольной решетки':
-            self.preview_canvas.weight = ((n - 1) * d) + (2 * r)
-            self.preview_canvas.height = ((n - 1) * d) + (2 * r)
-            self.img = np.zeros((self.preview_canvas.height, self.preview_canvas.weight, 3), np.uint8)
+            amplitude = 10
+            T_0 = 2
+            
+            w = self.preview_canvas.weight = ((n - 1) * d) + (2 * r) + 2 * amplitude
+            h = self.preview_canvas.height = ((n - 1) * d) + (2 * r) + 2 * amplitude
+            
+            frames = []
+            self.preview_canvas.t = 0
+            self.preview_canvas.play = True
+            self.preview_canvas.fps  = fps / time
+            
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), self.preview_canvas.fps, (w, h))
 
+            rng = np.random.default_rng()
+            
+            move_x = lambda x_0, phi, t, T_0: x_0 + amplitude * np.cos(phi) * np.cos((2 * np.pi / T_0) * t)
+            move_y = lambda y_0, phi, t, T_0: y_0 + amplitude * np.sin(phi) * np.cos((2 * np.pi / T_0) * t)
+            centers = np.zeros((n**2, 4))
+            i = 0
             for x in range(n):
                 for y in range(n):
-                    x1 = x * d + r
-                    y1 = y * d + r
-                    # x2 = x1 + a - 2.0 * radius
-                    # y2 = y1 + a - 2.0 * radius
-                    cv2.circle(self.img, (x1, y1), r, (255, 255, 255), -1)
+                    x1 = x * d + r + amplitude
+                    y1 = y * d + r + amplitude
+                    centers[i] = (x1, y1, rng.uniform(0, 2*np.pi), T_0)
+                    i += 1
+
+            for t in np.linspace(0, time, fps):
+                img = np.zeros((self.preview_canvas.height, self.preview_canvas.weight, 3), np.uint8)
+                
+                for c in centers:
+                    x = int(move_x(c[0], c[2], t, c[3]))
+                    y = int(move_y(c[1], c[2], t, c[3]))
+                    cv2.circle(img, (x, y), r, (255, 255, 255), -1)
+                    
+                out.write(img)
+                frames.append(img)
+
+
+            out.release()
+            self.preview_canvas.video = frames
+
+
 
         elif self.model_type == 'Случайные круги':
             pass
