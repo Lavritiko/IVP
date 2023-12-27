@@ -22,9 +22,9 @@ class AdditionalParamasFrame:
         
         self.label_r        = CTkLabel(self.frame, text="Радиус")
         self.input_r        = CTkEntry(self.frame, placeholder_text='R', width=50)
-        self.input_r.insert(0, '80')
+        self.input_r.insert(0, '20')
         
-        self.label_N        = CTkLabel(self.frame, text="Кол-во на сторону")
+        self.label_N        = CTkLabel(self.frame, text="Кол-во")
         self.input_N        = CTkEntry(self.frame, placeholder_text='N', width=50)
         self.input_N.insert(0, '5')
 
@@ -40,17 +40,33 @@ class AdditionalParamasFrame:
         self.input_T        = CTkEntry(self.frame, placeholder_text='T', width=50)
         self.input_T.insert(0, '10')
         
-        self.label_delta  = CTkLabel(self.frame, text="Дельта")
-        self.input_delta  = CTkEntry(self.frame, placeholder_text='delta', width=50)
-        self.input_delta.insert(0, '80')
+        self.label_delta    = CTkLabel(self.frame, text="Дельта")
+        self.input_delta    = CTkEntry(self.frame, placeholder_text='delta', width=50)
+        self.input_delta.insert(0, '10')
 
-        self.label_frames      = CTkLabel(self.frame, text="Количество кадров")
-        self.input_frames      = CTkEntry(self.frame, placeholder_text='frames', width=50)
+        self.label_frames   = CTkLabel(self.frame, text="Количество кадров")
+        self.input_frames   = CTkEntry(self.frame, placeholder_text='frames', width=50)
         self.input_frames.insert(0, '200')
 
         self.label_t        = CTkLabel(self.frame, text="Время(сек)")
         self.input_t        = CTkEntry(self.frame, placeholder_text='t', width=50)
         self.input_t.insert(0, '10')
+
+        self.label_mean     = CTkLabel(self.frame, text="Среднее")
+        self.input_mean     = CTkEntry(self.frame, placeholder_text='mean', width=50)
+        self.input_mean.insert(0, '10')
+
+        self.label_dispersion = CTkLabel(self.frame, text="Дисперсия")
+        self.input_dispersion = CTkEntry(self.frame, placeholder_text='dispersion', width=50)
+        self.input_dispersion.insert(0, '100')
+
+        self.label_low      = CTkLabel(self.frame, text="Нижняя граница")
+        self.input_low      = CTkEntry(self.frame, placeholder_text='low', width=50)
+        self.input_low.insert(0, '0')
+
+        self.label_high      = CTkLabel(self.frame, text="Верхняя граница")
+        self.input_high      = CTkEntry(self.frame, placeholder_text='high', width=50)
+        self.input_high.insert(0, '100')
 
 
         self.frame.grid(row=4, column=0, sticky=NSEW, padx=10, pady=10, ipady=5)
@@ -86,6 +102,18 @@ class AdditionalParamasFrame:
 
         self.label_t.grid_forget()
         self.input_t.grid_forget()
+
+        self.label_mean.grid_forget()
+        self.input_mean.grid_forget()
+
+        self.label_dispersion.grid_forget()
+        self.input_dispersion.grid_forget()
+
+        self.label_low.grid_forget()
+        self.input_low.grid_forget()
+
+        self.label_high.grid_forget()
+        self.input_high.grid_forget()
 
     def grid_impulse(self):
         self.input_label.configure(text="Введите координаты импульса:")
@@ -181,6 +209,50 @@ class AdditionalParamasFrame:
         self.label_t.grid(row=5, column=0, sticky=W, padx=10, pady=3)
         self.input_t.grid(row=5, column=1, sticky=W, padx=10, pady=3) 
 
+    def grid_random_circles(self):
+        self.input_label.configure(text="Введите кол-во кругов и их радиус:")
 
+        self.label_N.grid(row=1, column=0, sticky=W, padx=10, pady=3)
+        self.input_N.grid(row=1, column=1, sticky=W, padx=10, pady=3)
+
+        self.label_r.grid(row=2, column=0, sticky=W, padx=10, pady=3)
+        self.input_r.grid(row=2, column=1, sticky=W, padx=10, pady=3)
+
+        self.label_frames.grid(row=4, column=0, sticky=W, padx=10, pady=3)
+        self.input_frames.grid(row=4, column=1, sticky=W, padx=10, pady=3)
+        
+        self.label_t.grid(row=5, column=0, sticky=W, padx=10, pady=3)
+        self.input_t.grid(row=5, column=1, sticky=W, padx=10, pady=3) 
+
+
+    def grid_uniform_distribution(self):
+        self.input_label.configure(text="Введите диапазон:")
+
+        self.label_low.grid(row=1, column=0, sticky=W, padx=10, pady=3)
+        self.input_low.grid(row=1, column=1, sticky=W, padx=10, pady=3)
+
+        self.label_high.grid(row=2, column=0, sticky=W, padx=10, pady=3)
+        self.input_high.grid(row=2, column=1, sticky=W, padx=10, pady=3)
+
+        self.label_frames.grid(row=6, column=0, sticky=W, padx=10, pady=3)
+        self.input_frames.grid(row=6, column=1, sticky=W, padx=10, pady=3)
+        
+        self.label_t.grid(row=7, column=0, sticky=W, padx=10, pady=3)
+        self.input_t.grid(row=7, column=1, sticky=W, padx=10, pady=3)
+
+    def grid_normal_distribution(self):
+        self.input_label.configure(text="Введите среднее и дисперсию:")
+        
+        self.label_mean.grid(row=1, column=0, sticky=W, padx=10, pady=3)
+        self.input_mean.grid(row=1, column=1, sticky=W, padx=10, pady=3)
+
+        self.label_dispersion.grid(row=2, column=0, sticky=W, padx=10, pady=3)
+        self.input_dispersion.grid(row=2, column=1, sticky=W, padx=10, pady=3)
+
+        self.label_frames.grid(row=6, column=0, sticky=W, padx=10, pady=3)
+        self.input_frames.grid(row=6, column=1, sticky=W, padx=10, pady=3)
+        
+        self.label_t.grid(row=7, column=0, sticky=W, padx=10, pady=3)
+        self.input_t.grid(row=7, column=1, sticky=W, padx=10, pady=3)
     
     

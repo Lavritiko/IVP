@@ -48,7 +48,6 @@ class ModelCreatingWindow():
              'Случайные круги': self.random_circles,
              'Белый шум с равномерным распределением': self.noise_uniform_distribution,
              'Белый шум с нормальным распределением': self.noise_normal_distribution,
-             'Плоская гравитационная волна': self.flat_gravitational_wave,
         }
         
         def model_input_callback(choice):
@@ -125,6 +124,10 @@ class ModelCreatingWindow():
             n           = int(self.additional_input_frame.input_N.get())
             fps         = int(self.additional_input_frame.input_frames.get())
             time        = int(self.additional_input_frame.input_t.get())
+            mean        = int(self.additional_input_frame.input_mean.get())
+            dispertion  = int(self.additional_input_frame.input_dispersion.get())
+            low         = int(self.additional_input_frame.input_low.get())
+            high        = int(self.additional_input_frame.input_high.get())
             if (T < 1):
                 raise Exception
         except:
@@ -253,15 +256,82 @@ class ModelCreatingWindow():
 
 
         elif self.model_type == 'Случайные круги':
-            pass
-        elif self.model_type == 'Белый шум с равномерным распределением':
-            pass
-        elif self.model_type == 'Белый шум с нормальным распределением':
-            pass
-        elif self.model_type == 'Плоская гравитационная волна':
-            pass
-                # cv2.imwrite(f'hmm{t}.jpg', self.img) # сохранить ряд картинок для проверки видео
+            frames = []
+            self.preview_canvas.play = True
+            self.preview_canvas.fps  = fps / time
+
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), self.preview_canvas.fps, (w, h))
+
+            rng = np.random.default_rng()
+
+            dx, dy = 10, 10
             
+            move_x = lambda x_0, dx: x_0 + dx
+            move_y = lambda y_0, dy: y_0 + dy
+            centers = np.zeros((n**2, 4))
+            i = 0
+            for _ in range(n):
+                x1 = rng.uniform(10, w) + r
+                y1 = rng.uniform(10, h) + r
+                centers[i] = (x1, y1, dx, dy)
+                i += 1
+
+            for t in np.linspace(0, time, fps):
+                img = np.zeros((self.preview_canvas.height, self.preview_canvas.weight, 3), np.uint8)
+                
+                for c in centers:
+                    x = int(move_x(c[0], c[2]))
+                    y = int(move_y(c[1], c[3]))
+                    cv2.circle(img, (x, y), r, (255, 255, 255), -1)
+                    if (x + r) >= w or (x - r) <= 0:
+                        c[2] *= -1
+                    if (y + r) >= h or (y - r) <= 0:
+                        c[3] *= -1
+                    c[0] = x
+                    c[1] = y
+
+                out.write(img)
+                frames.append(img)
+
+
+            out.release()
+            self.preview_canvas.video = frames
+
+        elif self.model_type == 'Белый шум с равномерным распределением':
+
+            frames = []
+            self.preview_canvas.play = True
+            self.preview_canvas.fps  = fps / time
+
+            rng = np.random.default_rng()
+
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), self.preview_canvas.fps, (w, h), False)
+
+            for t in np.linspace(0, time, fps):
+                img = rng.uniform(low, high, (h, w)).astype(np.uint8)
+                frames.append(img)
+                out.write(img)
+            
+            out.release()
+            self.preview_canvas.video = frames
+
+        elif self.model_type == 'Белый шум с нормальным распределением':
+
+            frames = []
+            self.preview_canvas.play = True
+            self.preview_canvas.fps  = fps / time
+
+            rng = np.random.default_rng()
+
+            out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M','J','P','G'), self.preview_canvas.fps, (w, h), False)
+
+            for t in np.linspace(0, time, fps):
+                img = rng.normal(mean, dispertion, (h, w)).astype(np.uint8)
+                frames.append(img)
+                out.write(img)
+
+            out.release()
+            self.preview_canvas.video = frames
         
         
         
@@ -302,13 +372,14 @@ class ModelCreatingWindow():
         self.additional_input_frame.grid_node_circles()
     
     def random_circles(self):
-        pass
+        self.additional_input_frame.forget()
+        self.additional_input_frame.grid_random_circles()
     
     def noise_uniform_distribution(self):
-        pass
+        self.additional_input_frame.forget()
+        self.additional_input_frame.grid_uniform_distribution()
     
     def noise_normal_distribution(self):
-        pass
+        self.additional_input_frame.forget()
+        self.additional_input_frame.grid_normal_distribution()
     
-    def flat_gravitational_wave(self):
-        pass
