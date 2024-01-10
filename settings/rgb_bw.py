@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import kurtosis, skew
 
 class Settings:
     def __init__(self, img):
@@ -88,3 +90,16 @@ def gray(img, alpha_br, beta_cnt, red, green, blue):
     img = np.uint8(np.clip(img, 0, 255))
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return gray_img
+
+def image_statistics(img):
+    mean, std_dev = cv2.meanStdDev(img)
+    kurt = kurtosis(img, axis=None)
+    skewness = skew(img, axis=None)
+    minimum = np.min(img)
+    maximum = np.max(img)
+    quantile5 = np.quantile(img, .05)
+    quantile95 = np.quantile(img, .95)
+    return mean[0, 0], std_dev[0, 0], kurt, skewness, minimum, maximum, quantile5, quantile95
+
+
+

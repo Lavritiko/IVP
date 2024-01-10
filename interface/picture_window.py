@@ -1,9 +1,10 @@
 from  customtkinter import *
-from interface.widgets.settings import SettingsMenu
-from interface.widgets.picture_screen import Output_display
-from interface.widgets.switch_widget import MySwitch
+from .widgets.settings import SettingsMenu
+from .widgets.picture_screen import Output_display
+from .widgets.switch_widget import MySwitch
 from settings.rgb_bw import Settings
 from settings.rgb_bw import gray
+from .statistics_window import StatisticsWindow
 
 class PicWindow:
     def __init__(self, parent, width, height, image_cv=None, title='Child', resizable=(False, False)):
@@ -30,6 +31,7 @@ class PicWindow:
                                         variable=self.switch_var,
                                         command=self.switch_callback)
         
+        self.statistics_button = CTkButton(self.tab_view.tab('Изображение'), text='Статистика', command=self.statistics_button_callback)
                            
         self.settings_menu = SettingsMenu(self.tab_view.tab("Настройки"))
         
@@ -43,6 +45,7 @@ class PicWindow:
         # =============== Изображение ========================
 
         self.rgb_gray_switch.pack()
+        self.statistics_button.pack()
         self.output_picture.pack()
 
         # =============== Настройки ========================
@@ -67,3 +70,6 @@ class PicWindow:
         else:
             self.output_picture.is_gray = False
             self.output_picture.on_change()
+    def statistics_button_callback(self):
+        if self.switch_var.get() == '1':
+            StatisticsWindow(self.root, self.output_picture.image)

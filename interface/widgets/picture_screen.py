@@ -24,7 +24,7 @@ class Output_display():
             self.image = gray(self.image_cv, self.br, self.cnt, self.r, self.g, self.b)
         else:
             self.image = self.image_cv
-        self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+            self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         self.photo = ImageTk.PhotoImage(image=Image.fromarray(self.image))
         self.picture.create_image(0, 0, image=self.photo, anchor=NW)
     

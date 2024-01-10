@@ -7,6 +7,8 @@ from interface.widgets.video_screen import VideoScreen
 from interface.widgets.settings import SettingsMenu
 from settings.rgb_bw import gray
 import tkinter as tk
+from .statistics_window import StatisticsWindow
+
 
 class VideoPlayerWindow():
     def __init__(self, master, video_capture, title='Child', resizable=(False, False)):
@@ -36,7 +38,7 @@ class VideoPlayerWindow():
                                         variable=self.switch_is_gray_var,
                                         command=self.switch_callback)
 
-        
+        self.statistics_button = CTkButton(self.tab_view.tab('Видео'), text='Статистика', command=self.statistics_button_callback)
         self.bt = CTkButton(self.tab_view.tab('Видео'), text='stop', command=self.pressing_button_stop_start)
         self.fps = tk.IntVar()
         self.sl = CTkSlider(self.tab_view.tab('Видео'), 
@@ -87,6 +89,10 @@ class VideoPlayerWindow():
             self.video_screan.b = self.settings.blue
         else:
             self.video_screan.is_gray = False
+
+    def statistics_button_callback(self):
+        pass
+
           
 if __name__ == '__main__':
     
