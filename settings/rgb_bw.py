@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import kurtosis, skew
 
-IS_UPDATE_FACKING_STATISTICS = [False]
+IS_UPDATE_FUCKING_STATISTICS = [False]
 
 class Settings:
     def __init__(self, img):

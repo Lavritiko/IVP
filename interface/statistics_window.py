@@ -1,5 +1,5 @@
 from  customtkinter import *
-from settings.rgb_bw import image_statistics, IS_UPDATE_FACKING_STATISTICS
+from settings.rgb_bw import image_statistics, IS_UPDATE_FUCKING_STATISTICS
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -97,16 +97,16 @@ class StatisticsWindow:
         self.value_quantile_95.grid(row=9, column=1, sticky=W, padx=10, pady=5)
 
     def update(self):
-        print('UPDATE_FACKING_STATISTICS')
+        print('UPDATE_FUCKING_STATISTICS')
         
         self.calc_hist(self.gray_image)
         self.mean, self.std_dev, self.kurt, self.skewness, self.minimum, self.maximum, self.quantile5, self.quantile95 = image_statistics(self.gray_image)
   
     def check_update(self):
-        global IS_UPDATE_FACKING_STATISTICS
-        if IS_UPDATE_FACKING_STATISTICS[0]:
+        global IS_UPDATE_FUCKING_STATISTICS
+        if IS_UPDATE_FUCKING_STATISTICS[0]:
             self.update()
-            IS_UPDATE_FACKING_STATISTICS[0] = False
+            IS_UPDATE_FUCKING_STATISTICS[0] = False
         self.root.after(self.delay, self.check_update)
 
     def calc_hist(self, gris):
