@@ -2,7 +2,7 @@ import cv2 as cv
 import customtkinter as tk
 from PIL import Image, ImageTk
 from tkinter import filedialog
-from settings.rgb_bw import gray
+from settings.rgb_bw import gray, IS_UPDATE_FACKING_STATISTICS
 
 class VideoScreen():
     def __init__(self, master, video_capture) -> None:
@@ -22,6 +22,7 @@ class VideoScreen():
         self.is_gray = False
         self.br, self.cnt, self.r, self.g, self.b = 0, 0, 0, 0, 0
         
+        ret, self.frame = self.video_capture.read()
         self.update()
     
 
@@ -32,14 +33,17 @@ class VideoScreen():
     
     
     def update(self):
+        global IS_UPDATE_FACKING_STATISTICS
         if self.play:
-            ret, frame = self.video_capture.read()
-        
+            ret, self.frame = self.video_capture.read()
+
             if ret:
                 if self.is_gray:
-                    frame = gray(frame, self.br, self.cnt, self.r, self.g, self.b)
-                frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-                self.photo = ImageTk.PhotoImage(image=Image.fromarray(frame))
+                    self.frame = gray(self.frame, self.br, self.cnt, self.r, self.g, self.b)
+                self.frame = cv.cvtColor(self.frame, cv.COLOR_BGR2RGB)
+
+                self.photo = ImageTk.PhotoImage(image=Image.fromarray(self.frame))
+                IS_UPDATE_FACKING_STATISTICS[0] = True
                 self.root.create_image(0, 0, image=self.photo, anchor=tk.NW)
             else:
                 self.video_capture.set(cv.CAP_PROP_POS_MSEC, 0)

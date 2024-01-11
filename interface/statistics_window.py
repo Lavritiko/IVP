@@ -1,5 +1,5 @@
 from  customtkinter import *
-from settings.rgb_bw import image_statistics
+from settings.rgb_bw import image_statistics, IS_UPDATE_FACKING_STATISTICS
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,9 +7,8 @@ import cv2
 
 class StatisticsWindow:
     def __init__(self, parent, gray_image, title='Статистика', resizable=(False, False)):
-        
+        self.is_update = False
         self.gray_image = gray_image
-
         self.root = CTkToplevel(parent)
         self.root.title(title)
         self.root.geometry("850x400")
@@ -63,8 +62,9 @@ class StatisticsWindow:
         self.draw_widgets()
 
         self.delay = 15
+      
         self.update()
-
+        self.check_update()
     def draw_widgets(self):
         self.label_mean.grid(row=0, column=0, sticky=W, padx=10, pady=5)
         self.value_mean.grid(row=0, column=1, sticky=W, padx=10, pady=5)
@@ -97,9 +97,17 @@ class StatisticsWindow:
         self.value_quantile_95.grid(row=9, column=1, sticky=W, padx=10, pady=5)
 
     def update(self):
+        print('UPDATE_FACKING_STATISTICS')
+        
         self.calc_hist(self.gray_image)
-            
-        self.root.after(self.delay, self.update)
+        self.mean, self.std_dev, self.kurt, self.skewness, self.minimum, self.maximum, self.quantile5, self.quantile95 = image_statistics(self.gray_image)
+  
+    def check_update(self):
+        global IS_UPDATE_FACKING_STATISTICS
+        if IS_UPDATE_FACKING_STATISTICS[0]:
+            self.update()
+            IS_UPDATE_FACKING_STATISTICS[0] = False
+        self.root.after(self.delay, self.check_update)
 
     def calc_hist(self, gris):
         histogram = cv2.calcHist([gris], [0], None, [256], [0, 256])

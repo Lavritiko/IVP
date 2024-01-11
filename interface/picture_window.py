@@ -24,7 +24,7 @@ class PicWindow:
         
         self.output_picture = Output_display(self.tab_view.tab("Изображение"), image_cv)
 
-        self.switch_var = StringVar(value='1')
+        self.switch_var = StringVar(value='0')
         
         self.rgb_gray_switch = MySwitch(self.tab_view.tab('Изображение'),
                                         text='RGB-Gray',
@@ -71,5 +71,6 @@ class PicWindow:
             self.output_picture.is_gray = False
             self.output_picture.on_change()
     def statistics_button_callback(self):
+        print(self.switch_var.get())
         if self.switch_var.get() == '1':
             StatisticsWindow(self.root, self.output_picture.image)

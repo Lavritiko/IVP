@@ -31,7 +31,7 @@ class VideoPlayerWindow():
         
         self.video_screan = VideoScreen(self.tab_view.tab('Видео'), video_capture)
         
-        self.switch_is_gray_var = StringVar(value='1')
+        self.switch_is_gray_var = StringVar(value='0')
         
         self.rgb_gray_switch = MySwitch(self.tab_view.tab('Видео'),
                                         text='RGB-Gray',
@@ -67,6 +67,7 @@ class VideoPlayerWindow():
         
         # =============== Видео ========================
         self.rgb_gray_switch.pack()
+        self.statistics_button.pack()
         self.video_screan.pack()
         self.bt.pack()
         self.sl.pack()
@@ -91,9 +92,10 @@ class VideoPlayerWindow():
             self.video_screan.is_gray = False
 
     def statistics_button_callback(self):
-        pass
+        if self.switch_is_gray_var.get() == '1':
+            StatisticsWindow(self.root, self.video_screan.frame)
 
-          
+
 if __name__ == '__main__':
     
     path = filedialog.askopenfilename()
