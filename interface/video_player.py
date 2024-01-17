@@ -93,7 +93,8 @@ class VideoPlayerWindow():
 
     def statistics_button_callback(self):
         if self.switch_is_gray_var.get() == '1':
-            StatisticsWindow(self.root, self.video_screan.frame)
+            statistics = StatisticsWindow(self.root, self.video_screan.frame)
+            self.video_screan.func = statistics
 
 
 if __name__ == '__main__':

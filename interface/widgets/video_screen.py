@@ -21,7 +21,8 @@ class VideoScreen():
         self.play = True
         self.is_gray = False
         self.br, self.cnt, self.r, self.g, self.b = 0, 0, 0, 0, 0
-        
+        self.func = None
+
         ret, self.frame = self.video_capture.read()
         self.update()
     
@@ -33,7 +34,7 @@ class VideoScreen():
     
     
     def update(self):
-        global IS_UPDATE_FUCKING_STATISTICS
+        # global IS_UPDATE_FUCKING_STATISTICS
         if self.play:
             ret, self.frame = self.video_capture.read()
 
@@ -43,7 +44,9 @@ class VideoScreen():
                 self.frame = cv.cvtColor(self.frame, cv.COLOR_BGR2RGB)
 
                 self.photo = ImageTk.PhotoImage(image=Image.fromarray(self.frame))
-                IS_UPDATE_FUCKING_STATISTICS[0] = True
+                # IS_UPDATE_FUCKING_STATISTICS[0] = True
+                if self.func is not None and self.func.root.winfo_exists():
+                    self.func.update(self.frame)
                 self.root.create_image(0, 0, image=self.photo, anchor=tk.NW)
             else:
                 self.video_capture.set(cv.CAP_PROP_POS_MSEC, 0)
@@ -56,6 +59,9 @@ class VideoScreen():
     def pack(self):
         self.root.pack()
         self.labdel_fps.pack()
+    
+    def set_parameter(self):
+        return self.frame
 
         
           
