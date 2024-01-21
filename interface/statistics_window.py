@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 from .widgets.video_screen import VideoScreen
+import csv
 
 class StatisticsWindow:
     def __init__(self, parent, gray_image, title='Статистика', resizable=(False, False), func=None):
@@ -50,19 +51,26 @@ class StatisticsWindow:
         self.value_quantile_95           = CTkLabel(self.root, text=f'{self.quantile95: .2f}', font=('Arial', 14), text_color='white')
 
         #Histogram
-        self.figure = plt.Figure(figsize=(4, 3), dpi=100)
+        self.figure = plt.Figure(figsize=(5, 3), dpi=100)
         self.ax = self.figure.add_subplot(111)
 
         self.hist_canvas = FigureCanvasTkAgg(self.figure, self.root)
         self.hist_canvas.get_tk_widget().grid(row=0, column=3, rowspan=10, padx=10, pady=5)
+        histogram = cv2.calcHist([gray_image], [0], None, [256], [0, 256])
         self.ax = self.figure.gca()
         x = np.linspace(0, 255, 256)
-        y = np.linspace(10, 100000, 256)
+        hist = max(histogram)
+        hist *= (1 + 70/100)
+        y = np.linspace(10, hist, 256)
         self.graph, = self.ax.plot(x, y)
-        self.ax.set_yscale('log')
+        # self.ax.set_yscale('log')
 
+        # запись в файл
+        file = open('data.csv', 'w')
+        self.writer = csv.writer(file)
+        self.writer.writerow(['Mean', 'Variance', 'Standart deviation', 'Variation coefficient', 'Skewness coefficient', 'Kurtosis coefficient', 'Minimum','Maximum', 'Quantile  0.05', 'Quantile 0.95'])
+        
         self.draw_widgets()
-
         # self.delay = 15
       
         # self.update()
@@ -97,12 +105,13 @@ class StatisticsWindow:
 
         self.label_quantile_95.grid(row=9, column=0, sticky=W, padx=10, pady=5)
         self.value_quantile_95.grid(row=9, column=1, sticky=W, padx=10, pady=5)
+        self.calc_hist(self.gray_image)
 
     def update(self, gray=None):
         if gray is not None:
             self.gray_image = gray
-        self.calc_hist(self.gray_image)
         self.mean, self.std_dev, self.kurt, self.skewness, self.minimum, self.maximum, self.quantile5, self.quantile95 = image_statistics(self.gray_image)
+        self.calc_hist(self.gray_image)
         self.value_mean.configure(text='{:.2f}'.format(self.mean))
         self.value_variance.configure(text='{:.2f}'.format(self.std_dev ** 2))
         self.value_standart_deviation.configure(text='{:.2f}'.format(self.std_dev))
@@ -113,6 +122,16 @@ class StatisticsWindow:
         self.value_max.configure(text='{:.2f}'.format(self.maximum))
         self.value_quantile_5.configure(text='{:.2f}'.format(self.quantile5))
         self.value_quantile_95.configure(text='{:.2f}'.format(self.quantile95))
+        # self.writer.writerow(['{:.2f}'.format(self.mean), 
+                            #   '{:.2f}'.format(self.std_dev ** 2), 
+                            #   '{:.2f}'.format(self.std_dev), 
+                            #   '{:.2f}'.format(self.std_dev / self.mean), 
+                            #   '{:.2f}'.format(self.kurt), 
+                            #   '{:.2f}'.format(self.skewness), 
+                            #   '{:.2f}'.format(self.minimum), 
+                            #   '{:.2f}'.format(self.maximum), 
+                            #   '{:.2f}'.format(self.quantile5), 
+                            #   '{:.2f}'.format(self.quantile95)])
 
     # def check_update(self):
     #     global IS_UPDATE_FUCKING_STATISTICS
@@ -126,4 +145,14 @@ class StatisticsWindow:
         histogram = cv2.calcHist([gris], [0], None, [256], [0, 256])
         self.graph.set_ydata(histogram)
         self.hist_canvas.draw()
+        self.writer.writerow(['{:.2f}'.format(self.mean), 
+                              '{:.2f}'.format(self.std_dev ** 2), 
+                              '{:.2f}'.format(self.std_dev), 
+                              '{:.2f}'.format(self.std_dev / self.mean), 
+                              '{:.2f}'.format(self.kurt), 
+                              '{:.2f}'.format(self.skewness), 
+                              '{:.2f}'.format(self.minimum), 
+                              '{:.2f}'.format(self.maximum), 
+                              '{:.2f}'.format(self.quantile5), 
+                              '{:.2f}'.format(self.quantile95)])
         
