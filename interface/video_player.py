@@ -8,15 +8,13 @@ from interface.widgets.settings import SettingsMenu
 from settings.rgb_bw import gray
 import tkinter as tk
 from .statistics_window import StatisticsWindow
+from .widgets.image_conversion_functions import ConversionFunctions
 
 
 class VideoPlayerWindow():
     def __init__(self, master, video_capture, title='Child', resizable=(False, False)):
         self.master = master
         self.video_capture = video_capture
-        
-        # h_video = self.video_capture.get(cv.CAP_PROP_FRAME_HEIGHT)
-        # w_video = self.video_capture.get(cv.CAP_PROP_FRAME_WIDTH)
         
         self.root = CTkToplevel(master)
         self.root.title(title)
@@ -28,8 +26,11 @@ class VideoPlayerWindow():
         self.tab_view = CTkTabview(self.root, command=self.select_menu)
         self.tab_view.add('Видео')
         self.tab_view.add('Настройки')
+        self.tab_view.add('функции преобразования')
         
-        self.video_screan = VideoScreen(self.tab_view.tab('Видео'), video_capture)
+        self.conversion_functions_menu  = ConversionFunctions(self.tab_view.tab('функции преобразования'), self.video_capture.read()[1])
+        
+        self.video_screan = VideoScreen(self.tab_view.tab('Видео'), video_capture, self.conversion_functions_menu.conversion)
         
         self.switch_is_gray_var = StringVar(value='0')
         
@@ -49,7 +50,6 @@ class VideoPlayerWindow():
         self.sl.set(self.video_screan.fps)
         
         self.settings = SettingsMenu(self.tab_view.tab("Настройки"))
-        
         self.draw_widjets()
         
 

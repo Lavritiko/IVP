@@ -5,7 +5,7 @@ from .widgets.switch_widget import MySwitch
 from settings.rgb_bw import Settings
 from settings.rgb_bw import gray
 from .statistics_window import StatisticsWindow
-
+from .widgets.image_conversion_functions import ConversionFunctions
 class PicWindow:
     def __init__(self, parent, width, height, image_cv=None, title='Child', resizable=(False, False)):
         
@@ -21,19 +21,21 @@ class PicWindow:
         self.tab_view = CTkTabview(self.root, command=self.select_menu)
         self.tab_view.add('Изображение')
         self.tab_view.add('Настройки')
+        self.tab_view.add('функции преобразования')
         
-        self.output_picture = Output_display(self.tab_view.tab("Изображение"), image_cv)
+        self.conversion_functions_menu  = ConversionFunctions(self.tab_view.tab('функции преобразования'), image_cv)
+        self.output_picture  = Output_display(self.tab_view.tab("Изображение"), image_cv, self.conversion_functions_menu.conversion)
 
-        self.switch_var = StringVar(value='0')
-        
+        self.switch_var      = StringVar(value='0')
         self.rgb_gray_switch = MySwitch(self.tab_view.tab('Изображение'),
                                         text='RGB-Gray',
                                         variable=self.switch_var,
                                         command=self.switch_callback)
         
-        self.statistics_button = CTkButton(self.tab_view.tab('Изображение'), text='Статистика', command=self.statistics_button_callback)
+        self.statistics_button          = CTkButton(self.tab_view.tab('Изображение'), text='Статистика', command=self.statistics_button_callback)
                            
-        self.settings_menu = SettingsMenu(self.tab_view.tab("Настройки"))
+        self.settings_menu              = SettingsMenu(self.tab_view.tab("Настройки"))
+        
         
         self.draw_widgets()
                  

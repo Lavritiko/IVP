@@ -5,9 +5,11 @@ from tkinter import filedialog
 from settings.rgb_bw import gray, IS_UPDATE_FUCKING_STATISTICS
 
 class VideoScreen():
-    def __init__(self, master, video_capture) -> None:
-        self.video_capture = video_capture
+    def __init__(self, master, video_capture, conversion_func=None) -> None:        
         self.master = master
+        self.video_capture = video_capture
+        self.conversion_func = conversion_func
+        
         
         h = self.video_capture.get(cv.CAP_PROP_FRAME_HEIGHT)
         w = self.video_capture.get(cv.CAP_PROP_FRAME_WIDTH)
@@ -41,10 +43,12 @@ class VideoScreen():
             if ret:
                 if self.is_gray:
                     self.frame = gray(self.frame, self.br, self.cnt, self.r, self.g, self.b)
-                self.frame = cv.cvtColor(self.frame, cv.COLOR_BGR2RGB)
+                    if self.conversion_func is not None:
+                        self.frame = self.conversion_func(self.frame)
+                else:
+                    self.frame = cv.cvtColor(self.frame, cv.COLOR_BGR2RGB)
 
                 self.photo = ImageTk.PhotoImage(image=Image.fromarray(self.frame))
-                # IS_UPDATE_FUCKING_STATISTICS[0] = True
                 if self.func is not None and self.func.root.winfo_exists():
                     self.func.update(self.frame)
                 self.root.create_image(0, 0, image=self.photo, anchor=tk.NW)

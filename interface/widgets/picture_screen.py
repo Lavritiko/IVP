@@ -6,7 +6,8 @@ from settings.rgb_bw import gray
 import numpy as np
 
 class Output_display():
-    def __init__(self, place, image_cv):
+    def __init__(self, place, image_cv, conversion_func=None):
+        self.conversion_func = conversion_func
         self.image_cv = image_cv
         self.image = image_cv
         self.place = place
@@ -22,6 +23,8 @@ class Output_display():
     def cv_to_pil(self):
         if self.is_gray:
             self.image = gray(self.image_cv, self.br, self.cnt, self.r, self.g, self.b)
+            if self.conversion_func is not None:
+                self.image = self.conversion_func(self.image)
         else:
             self.image = self.image_cv
             self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
